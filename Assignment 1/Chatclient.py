@@ -47,7 +47,6 @@ def sendMsg():
 root = Tk()
 root.geometry('895x300')
 root.title('Client Interface')
-root.title('Server Interface')
 root.config(bg='black')
 root.resizable(0, 0)
 frame=Frame(root)
