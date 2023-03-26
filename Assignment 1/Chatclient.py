@@ -29,12 +29,13 @@ def recvMsg():
             root.destroy()
             break
         else:
-            txt.insert(END,recieved)        
+            txt.insert(END,'Recieved: '+ recieved+'\n')        
 
 def sendMsg():
     global client
     if msgField.get()!='':
         client.send(msgField.get().encode('utf-8'))
+        txt.insert(END,'Sent: '+ msgField.get()+'\n') 
         if msgField.get()=='quit':
             client.close()
             root.destroy()
@@ -45,6 +46,7 @@ def sendMsg():
 
 root = Tk()
 root.geometry('895x300')
+root.title('Client Interface')
 root.title('Server Interface')
 root.config(bg='black')
 root.resizable(0, 0)
