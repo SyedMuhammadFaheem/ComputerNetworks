@@ -69,6 +69,16 @@ txt.pack(side=TOP, fill=X)
 verticalScroll.config(command=txt.yview)
 portLabel = Label(root, text='Enter IP and Port: ',
                   font=('arial', 14, 'bold'), bg='black', fg='white')
+
+frame=Frame(root)
+frame.place(x=20,y=80)
+verticalScroll=Scrollbar(frame)
+verticalScroll.pack(side=RIGHT,fill=Y)
+txt=Text(frame,width=90,height=10,yscrollcommand = verticalScroll.set,bg='black',fg='white')
+txt.pack(side=TOP, fill=X)
+verticalScroll.config(command=txt.yview)
+portLabel = Label(root, text='Enter IP and Port: ',
+                   font=('arial', 14, 'bold'), bg='black',fg='white')
 portLabel.place(x=20, y=15)
 portField = Entry(root, width=50, font=(
     'arial', 14, 'bold'))
@@ -77,6 +87,10 @@ listenBtn = Button(root, text="Start Listening", bd=0, bg='white', fg='black',
                    relief=RAISED, command=establishConnection).place(x=770, y=15)
 connLabel = Label(root, text='Connection Status: Not Connected!',
                   font=('arial', 14, 'bold'), bg='black', fg='white')
+listenBtn = Button(root, text="Start Listening", bd=0, bg='white',fg='black',
+                       relief=RAISED, command=establishConnection).place(x=770, y=15)
+connLabel = Label(root, text='Connection Status: Not Connected!',
+                   font=('arial', 14, 'bold'),bg='black',fg='white')
 connLabel.place(x=20, y=50)
 msgField = Entry(root, width=66, font=(
     'arial', 14, 'bold'))
@@ -84,4 +98,6 @@ msgField.place(x=20, y=250)
 msgField.bind("<KeyRelease-Return>", press)
 sendBtn = Button(root, text="Send Message", bd=0, bg='white', fg='black',
                  relief=RAISED, command=sendMsg).place(x=775, y=250)
+sendBtn = Button(root, text="Send Message", bd=0, bg='white',fg='black',
+                       relief=RAISED, command=sendMsg).place(x=775, y=250)
 root.mainloop()
