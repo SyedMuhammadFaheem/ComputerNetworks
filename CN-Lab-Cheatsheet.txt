@@ -1,0 +1,169 @@
+=============================Telnet=====================================
+conf t
+interface vlan 1
+ip address 192.168.1.1 255.255.255.0
+no sh
+exit
+line vty 0 15
+password cisco
+login
+end
+enable password cs
+exit
+
+-->(Router aur switch main hogi config)
+-->PC ki command line pr -- telnet 192.168.1.1
+
+===============================SSH=======================================
+conf t
+hostname s1
+ip domain name cs-study
+crypto key generate rsa
+
+1024
+
+ip ssh version 2
+line vty 0 15
+transport input ssh
+exit
+
+username cs-study secret abc
+line vty 0 15
+login local
+
+================================static routing=============================
+
+ip route 20.0.0.0 255.0.0.0 15.0.0.1
+to which network via which router
+
+-->ya phir GUI se krne ka seedha seedha
+
+
+===============================rip=============================================
+router rip
+network 10.0.0.0 -----give networks which are on the 2 interfaces of the router
+network 15.0.0.0
+
+===============================ospf=========================================
+router ospf 1
+network 10.0.0.0 0.255.255.255 area 0
+network 15.0.0.0 0.255.255.255 area 0
+
+
+-->ospf 2 doosre router k liye
+
+-->to show which protocol is being used and route
+sh ip protocols
+sh ip route 
+
+
+==================================VLAN========================================
+
+vlan 10
+name cs
+exit
+
+
+int fa0/1
+switchport mode access/trunk
+switchport access vlan 10
+exit
+
+-->do sh interfaces vlan 
+-->do sh interfaces trunk
+
+==================================intervlan===========================================
+
+int fa0/0
+no shutdown
+int fa0/0.10
+encapsulation dot1Q 10
+ip address 10.0.0.0 255.0.0.0
+
+-->Ye kaam router pr hoga aur baaqi vlan ka kaam switch pr
+
+
+
+
+===================================ACL===============================================
+
+******Standard*****
+ip access-list standard Block(koi bhi naam dedo)
+deny 10.0.0.0 0.255.255.255  / deny 10.0.0.7 0.0.0.0 (only denies the mentioned host)
+permit any		(denies from 10.0.0.0 network and allows anyother)
+exit
+
+int fa0/0
+ip access-group Block in/out
+
+******Extended*******
+
+ip access-list extended web
+permit tcp any host 11.0.1.1 eq 80
+deny ip any host 11.0.1.1
+exit
+
+interface fa0/0
+ip access-group web in
+
+permit tcp 10.0.0.0 0.255.255.255 host 30.0.0.10 eq 80
+Allow a packet if its source address is from the network 10.0.0.0/8 and the destination address is 30.0.0.10 and the destination application is HTTP.
+
+
+-->Lab task main jese Telnet block krne ko kaha tha wesa kch ho to aise krna
+Router(config)#ip access-list standard TEL
+Router(config-std-nacl)#permit 10.1.0.1 
+Router(config-std-nacl)#deny any
+Router(config-std-nacl)#exit
+Router(config)#exit
+
+
+Router#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#line vty 0 15
+Router(config-line)#access-class TEL in
+Router(config-line)#
+Router(config-line)#exit
+Router(config)#exit	
+
+-->blocking all traffic except web:
+
+Router(config)#ip access-list extended web
+Router(config-ext-nacl)#permit tcp any host 11.0.1.1 eq 80
+Router(config-ext-nacl)#permit tcp any host 11.0.1.1 eq 443
+Router(config-ext-nacl)#deny ip any host 11.0.1.1
+Router(config-ext-nacl)#exit
+
+Router(config)#interface fa0/0
+Router(config-if)#ip access-group web in
+Router(config-if)#exit
+Router(config)#exit
+
+-->Agr web ki jaga email bola ho to 80 ki jaga 25 krdogey bs aur ftp bolen to 21
+
+=====================================NAT==========================================
+
+-----------static----------
+ip nat inside source static 192.168.0.10 209.165.200.10
+interface FastEthernet 0/1
+ip nat inside
+interface Serial 0/0/0
+ip nat outside
+
+
+----------extended-------
+ip nat pool NAT-POOL 209.165.200.226 209.165.200.240 netmask 255.255.255.224
+access-list 1 permit 192.168.0.0 0.255.255.255
+ip nat inside source list 1 pool NAT-POOL
+interface FastEthernet 0/1
+ip nat inside
+interface Serial 0/0/0
+ip nat outside
+
+-----------PAT-------------
+access list 1 permit 192.168.0.0 0.255.255.255
+ip nat inside source list 1 interface serial 0/0/0 overload
+interface FastEthernet 0/1
+ip nat inside
+interface Serial 0/0/0
+ip nat outside
